@@ -5,163 +5,152 @@ import { ProgressBar } from '@/components/ui/ProgressBar'
 import { Button } from '@/components/ui/Button'
 import { badges, studentProfile } from '@/data/mock'
 import { motion } from 'framer-motion'
-import { Flame, Trophy, Zap } from 'lucide-react'
+import { Trophy, Zap, ArrowRight } from 'lucide-react'
 
 const nextLevelXp = 5000
 const xpIntoLevel = studentProfile.xp % nextLevelXp
 
 export function GamificationPage() {
   return (
-    <div className="space-y-10">
-      <PageHeader
-        eyebrow="Gamification"
-        title="XP, badges, and streaks — tuned for consistency, not gimmicks."
-        description="Rewards reinforce behaviors that recruiters can verify: shipped tasks, reviewed simulations, and documented outcomes."
-      />
+    <div className="flex justify-center">
+      {/* HEIGHT FIX: Outer container with reduced section gaps */}
+      <div className="w-full max-w-5xl space-y-3">
+      {/* === ZONE 1: PROGRESS OVERVIEW === */}
+      {/* Compact horizontal overview, high density */}
+      {/* REFINED SPACING: Tightened header section */}
+      <div className="space-y-1">
+        <PageHeader title="Career progress" />
 
-      {/* === A. IMPROVEMENT: Enhanced XP section with employability connection === */}
-      <div className="grid gap-6 lg:grid-cols-3">
-        <Card className="lg:col-span-2">
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div>
-              <CardTitle>Experience points</CardTitle>
-              <CardDescription>Level {studentProfile.level} · mock progression curve</CardDescription>
-            </div>
-            {/* === E. IMPROVEMENT: Enhanced streak display with urgency messaging === */}
-            <div className="inline-flex items-center gap-2 rounded-full bg-orange-50 px-3 py-1 text-xs font-semibold text-orange-800 dark:bg-orange-950/40 dark:text-orange-100">
-              <Flame className="h-4 w-4" />
-              {studentProfile.streakDays} day streak
-            </div>
+        {/* HEADER TIGHTEN: Reduced margin-top to eliminate double-spacing */}
+        {/* SPACING REDUCED: Compact XP card */}
+        <div className="mt-1.5 space-y-1.5 rounded-lg border border-slate-200/50 bg-slate-50/30 p-3 dark:border-slate-700/50 dark:bg-slate-900/30">
+          <div className="flex flex-wrap items-center gap-2 text-sm">
+            <span className="font-semibold text-slate-900 dark:text-white">
+              {studentProfile.xp.toLocaleString()} XP
+            </span>
+            <span className="text-slate-400 dark:text-slate-500">•</span>
+            <span className="text-slate-600 dark:text-slate-400">
+              Level <span className="font-semibold text-slate-900 dark:text-white">{studentProfile.level}</span>
+            </span>
+            <span className="text-slate-400 dark:text-slate-500">•</span>
+            <span className="text-slate-600 dark:text-slate-400">
+              {xpIntoLevel.toLocaleString()} / {nextLevelXp.toLocaleString()} to next level
+            </span>
+            <span className="text-slate-400 dark:text-slate-500">•</span>
+            <span className="text-slate-600 dark:text-slate-400">
+              Streak: <span className="font-semibold text-slate-900 dark:text-white">{studentProfile.streakDays} days</span>
+            </span>
           </div>
-          <p className="mt-6 text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
-            {studentProfile.xp.toLocaleString()}
-            <span className="text-base font-medium text-slate-500"> XP</span>
-          </p>
-          <div className="mt-4">
-            <div className="mb-2 flex justify-between text-xs text-slate-500 dark:text-slate-400">
-              <span>Progress to next level</span>
-              <span>
-                {xpIntoLevel} / {nextLevelXp}
-              </span>
-            </div>
+          <div className="pt-0.5">
             <ProgressBar value={(xpIntoLevel / nextLevelXp) * 100} />
           </div>
-
-          {/* === A. IMPROVEMENT: Added explanatory microcopy connecting XP to employability === */}
-          <div className="mt-6 space-y-2 border-t border-slate-100 pt-6 dark:border-slate-800">
-            <p className="text-xs font-medium text-slate-700 dark:text-slate-300">
-              How XP impacts your readiness
-            </p>
-            <ul className="space-y-1 text-xs text-slate-600 dark:text-slate-400">
-              <li>
-                • <span className="font-medium">XP reflects effort:</span> Completing simulations, shipping tasks, and maintaining streaks earns points.
-              </li>
-              <li>
-                • <span className="font-medium">Higher level = recruiter credibility:</span> Your XP level signals sustained, hands-on work.
-              </li>
-              <li>
-                • <span className="font-medium">Visible benefit:</span> Level 15+ unlocks "Advanced track" opportunities on WorkForge.
-              </li>
-            </ul>
-          </div>
-        </Card>
-
-        {/* === B. IMPROVEMENT: Rewritten weekly challenge with outcome-driven messaging === */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Zap className="h-4 w-4 text-amber-500" />
-              Weekly challenge
-            </CardTitle>
-            <CardDescription>Action-driven, high-impact</CardDescription>
-          </CardHeader>
-          <div className="space-y-4 px-5 pb-6">
-            {/* Challenge: Outcome-driven title */}
-            <div>
-              <p className="text-sm font-semibold text-slate-900 dark:text-white">
-                Boost Backend Readiness
-              </p>
-              <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">
-                Complete 1 backend simulation and submit write-up
-              </p>
-            </div>
-
-            {/* Why it matters */}
-            <div className="rounded-lg border border-slate-200 bg-slate-50/40 p-3 dark:border-slate-700/60 dark:bg-slate-900/30">
-              <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                Why it matters
-              </p>
-              <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">
-                Backend is your weakest area (currently 61/100). Closing this gap unlocks internship eligibility.
-              </p>
-            </div>
-
-            {/* Reward */}
-            <div className="flex items-center justify-between rounded-lg bg-emerald-50 p-2 dark:bg-emerald-950/30">
-              <span className="text-xs text-emerald-900 dark:text-emerald-100">Reward</span>
-              <span className="font-semibold text-emerald-700 dark:text-emerald-300">
-                +300 XP · Unlock advanced track
-              </span>
-            </div>
-
-            {/* CTA */}
-            <Button to="/simulation" size="sm" variant="secondary" className="w-full">
-              Start challenge
-            </Button>
-          </div>
-        </Card>
+        </div>
       </div>
 
-      {/* === D. IMPROVEMENT: Added employability relevance context section === */}
-      <Card className="border-blue-200 bg-blue-50/40 dark:border-blue-900/50 dark:bg-blue-950/20">
+      {/* === ZONE 2: NEXT UNLOCK (PRIMARY) === */}
+      {/* REBUILT: Structured, high-impact action card */}
+      <Card className="border-blue-200/40 dark:border-blue-800/40 bg-blue-50/20 dark:bg-blue-950/20">
         <CardHeader>
-          <CardTitle className="text-sm">Gamification for career outcomes</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <Zap className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+            Next unlock
+          </CardTitle>
         </CardHeader>
-        <p className="px-5 pb-5 text-xs text-slate-700 dark:text-slate-300">
-          Badges, XP, and streaks are designed to reinforce <span className="font-semibold">consistent effort</span>, 
-          <span className="font-semibold"> practical proof</span>, and <span className="font-semibold">job-readiness</span>. 
-          Every reward unlocks real opportunities—internships, mentorship priority, and recruiter visibility. 
-          Progress here translates directly to your employability score.
-        </p>
+
+        {/* LAYOUT: 2-column grid - left (target + requirements) | right (reward + impact + CTA) */}
+        {/* SPACING REDUCED: Tightened gap and padding */}
+        <div className="grid grid-cols-1 gap-3 px-6 pb-4 md:grid-cols-2">
+          {/* LEFT COLUMN: Target & Requirements */}
+          <div className="space-y-2">
+            {/* What is being unlocked */}
+            <div>
+              <p className="text-lg font-semibold text-slate-900 dark:text-white">
+                Advanced track access
+              </p>
+            </div>
+
+            {/* Requirements */}
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-400">
+                Requirements
+              </p>
+              {/* SPACING REDUCED: Tightened list */}
+              <ul className="text-sm text-slate-700 dark:text-slate-300 space-y-0.5 mt-1">
+                <li className="flex items-start gap-2">
+                  <span className="text-slate-400 dark:text-slate-500 mt-0.5 shrink-0">•</span>
+                  <span>Reach level 15</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-slate-400 dark:text-slate-500 mt-0.5 shrink-0">•</span>
+                  <span>Complete 1 backend simulation</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* RIGHT COLUMN: Reward, Impact, CTA */}
+          {/* CARD COMPACTED: Reduced vertical spacing */}
+          <div className="flex flex-col space-y-2">
+            {/* REFINED: Compact reward & impact stacking */}
+            <div>
+              <p className="text-xs text-slate-600 dark:text-slate-400">Reward</p>
+              <p className="text-sm font-semibold text-slate-900 dark:text-white">+300 XP</p>
+            </div>
+
+            <div>
+              <p className="text-xs text-slate-600 dark:text-slate-400">Impact</p>
+              <p className="text-sm font-semibold text-slate-900 dark:text-white">Internship eligibility</p>
+            </div>
+
+            {/* RESPONSIVE: CTA button at bottom of right column */}
+            <div className="pt-0.5">
+              <Button to="/simulation" size="sm" className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 text-white">
+                Start task
+                <ArrowRight className="h-4 w-4 ml-2" />
+              </Button>
+            </div>
+          </div>
+        </div>
       </Card>
 
-      {/* === C. IMPROVEMENT: Enhanced badge cards with unlock conditions and practical benefits === */}
+      {/* === ZONE 3: BADGES === */}
+      {/* REFINED: Clean badge grid with unlock conditions and proof */}
       <Card>
         <CardHeader>
-          <CardTitle>Badges & achievements</CardTitle>
-          <CardDescription>Collect evidence-linked milestones (mock tiers)</CardDescription>
+          <CardTitle>Badges & milestones</CardTitle>
+          <CardDescription>Verified achievement tiers</CardDescription>
         </CardHeader>
-        <div className="grid gap-4 px-5 pb-5 sm:grid-cols-2 lg:grid-cols-4">
+
+        <div className="grid gap-2 px-4 pb-4 sm:grid-cols-2 lg:grid-cols-4">
           {badges.map((b, i) => {
-            // === C. IMPROVEMENT: Added unlock conditions and practical benefits metadata ===
+            // REFINED: Minimal metadata for each badge
             const badgeMetadata: Record<
               string,
               {
                 unlockCondition: string
-                benefit: string
+                proves: string
               }
             > = {
               b1: {
-                unlockCondition: 'Complete your first simulation',
-                benefit: 'Signals hands-on readiness to recruiters',
+                unlockCondition: 'Complete first simulation',
+                proves: 'Practical readiness',
               },
               b2: {
-                unlockCondition: 'Map skills for 2 different roles',
-                benefit: 'Shows career clarity and role exploration',
+                unlockCondition: 'Map 2 different roles',
+                proves: 'Career clarity',
               },
               b3: {
-                unlockCondition: 'Reach employability score 85+',
-                benefit:
-                  'Qualifies you for senior-tier internship opportunities',
+                unlockCondition: 'Score 85+',
+                proves: 'Advanced capability',
               },
               b4: {
-                unlockCondition: 'Maintain 14-day focus streak',
-                benefit: 'Demonstrates consistent discipline and commitment',
+                unlockCondition: '14-day streak',
+                proves: 'Consistent discipline',
               },
             }
             const meta = badgeMetadata[b.id] || {
               unlockCondition: 'Complete related tasks',
-              benefit: 'Unlock career opportunities',
+              proves: 'Verified progress',
             }
 
             return (
@@ -171,80 +160,67 @@ export function GamificationPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
               >
-                <Card
-                  className={
+                <div
+                  className={`rounded-lg border p-2.5 transition-all ${
                     b.locked
-                      ? 'opacity-60 grayscale'
-                      : 'transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-float)]'
-                  }
+                      ? 'border-slate-200/20 bg-slate-50/10 opacity-60 dark:border-slate-700/20 dark:bg-slate-900/5'
+                      : 'border-slate-200/60 bg-white dark:border-slate-700/60 dark:bg-slate-900/50'
+                  }`}
                 >
+                  {/* Header: Icon + Title + Badge */}
                   <div className="flex items-start justify-between gap-2">
-                    <div className="rounded-2xl bg-amber-50 p-2 text-amber-700 dark:bg-amber-950/40 dark:text-amber-200">
-                      <Trophy className="h-5 w-5" />
+                    <div className={`rounded-lg p-2 shrink-0 ${
+                      b.locked
+                        ? 'bg-slate-200/10 text-slate-400 dark:bg-slate-800/20 dark:text-slate-600'
+                        : 'bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300'
+                    }`}>
+                      <Trophy className="h-4 w-4" />
                     </div>
-                    <Badge tone="warning">{b.tier}</Badge>
-                  </div>
-                  <CardTitle className="mt-3 text-base">{b.name}</CardTitle>
-
-                  {/* === C. IMPROVEMENT: Enhanced badge info: unlock condition, benefit, XP === */}
-                  <div className="mt-3 space-y-2">
-                    <p className="text-xs text-slate-600 dark:text-slate-400">
-                      <span className="font-medium">Unlock:</span> {meta.unlockCondition}
-                    </p>
-                    <p className="text-xs text-slate-600 dark:text-slate-400">
-                      <span className="font-medium">Benefit:</span> {meta.benefit}
-                    </p>
-                    <p className="text-xs font-semibold text-amber-700 dark:text-amber-300">
-                      +{b.xp} XP on unlock
-                    </p>
+                    {!b.locked && <Badge tone="success" className="text-xs shrink-0">Earned</Badge>}
                   </div>
 
-                  {/* Status: Unlocked or locked with next action hint */}
-                  <div className="mt-3 pt-2 border-t border-slate-100 dark:border-slate-800">
-                    {b.locked ? (
-                      <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
-                        Locked · Work toward the unlock condition above
-                      </p>
-                    ) : (
-                      <p className="text-xs font-medium text-emerald-600 dark:text-emerald-300">
-                        ✓ Unlocked
-                      </p>
-                    )}
-                  </div>
-                </Card>
+                  {/* Title */}
+                  <p className={`mt-1 text-sm font-semibold ${
+                    b.locked
+                      ? 'text-slate-500 dark:text-slate-600'
+                      : 'text-slate-900 dark:text-white'
+                  }`}>
+                    {b.name}
+                  </p>
+
+                  {/* XP prominently displayed */}
+                  <p className={`text-xs font-bold ${
+                    b.locked
+                      ? 'text-slate-400 dark:text-slate-600'
+                      : 'text-amber-700 dark:text-amber-300'
+                  } mt-1`}>
+                    +{b.xp} XP
+                  </p>
+
+                  {/* What it proves */}
+                  <p className={`text-xs ${
+                    b.locked
+                      ? 'text-slate-500 dark:text-slate-600'
+                      : 'text-slate-600 dark:text-slate-400'
+                  } mt-1`}>
+                    {meta.proves}
+                  </p>
+
+                  {/* Unlock condition */}
+                  <p className={`text-xs mt-1 pt-1 border-t ${
+                    b.locked
+                      ? 'border-slate-200/10 text-slate-500 dark:border-slate-700/10 dark:text-slate-600'
+                      : 'border-slate-200/30 text-slate-600 dark:border-slate-700/30 dark:text-slate-400'
+                  }`}>
+                    {b.locked ? `Unlock: ${meta.unlockCondition}` : `✓ Unlocked`}
+                  </p>
+                </div>
               </motion.div>
             )
           })}
         </div>
       </Card>
-
-      {/* === E. IMPROVEMENT: Streak maintenance section with urgency/supportive messaging === */}
-      <Card className="border-orange-200 bg-orange-50/40 dark:border-orange-900/50 dark:bg-orange-950/20">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-sm">
-            <Flame className="h-4 w-4 text-orange-600 dark:text-orange-400" />
-            Keep your streak alive
-          </CardTitle>
-        </CardHeader>
-        <div className="space-y-3 px-5 pb-5">
-          <p className="text-sm text-slate-700 dark:text-slate-300">
-            You're on a <span className="font-semibold text-orange-700 dark:text-orange-300">{studentProfile.streakDays}-day streak</span>. 
-            Maintain it tomorrow with one 10-minute task to stay focused.
-          </p>
-          <div className="pt-2">
-            <Button
-              to="/learning"
-              size="sm"
-              className="bg-orange-700 hover:bg-orange-800 dark:bg-orange-600 dark:hover:bg-orange-700"
-            >
-              Continue streak
-            </Button>
-          </div>
-          <p className="text-xs text-slate-600 dark:text-slate-400">
-            Hint: A short daily task counts. Focus over hours.
-          </p>
-        </div>
-      </Card>
+      </div>
     </div>
   )
 }
