@@ -17,11 +17,11 @@ export function AppShell() {
       <div className="mx-auto flex max-w-[1440px]">
         <aside
           className={cn(
-            'fixed inset-y-0 left-0 z-40 w-72 border-r border-slate-200/80 bg-surface-0/95 px-4 py-6 backdrop-blur-md transition-transform dark:border-slate-800 dark:bg-surface-0/90',
+            'fixed inset-y-0 left-0 z-40 w-72 border-r border-slate-200/80 bg-surface-0/95 backdrop-blur-md transition-transform dark:border-slate-800 dark:bg-surface-0/90 flex flex-col',
             mobileOpen ? 'translate-x-0' : '-translate-x-full',
           )}
         >
-          <div className="flex items-center justify-between gap-2 px-2">
+          <div className="flex items-center justify-between gap-2 px-4 py-6 shrink-0">
             <Link to="/" className="flex items-center gap-2" onClick={() => setMobileOpen(false)}>
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-600 text-sm font-bold text-white shadow-sm dark:bg-brand-500">
                 WF
@@ -45,51 +45,62 @@ export function AppShell() {
             </button>
           </div>
 
-          <nav className="mt-8 space-y-1">
-            {mainNav.map((item) => (
+          <nav className="mt-8 flex-1 overflow-y-auto space-y-6 pr-2">
+            {mainNav.map((group) => (
+              <div key={group.section} className="space-y-1">
+                <p className="px-3 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                  {group.section}
+                </p>
+                {group.items.map((item) => (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    end={item.to === '/' || item.to === '/simulation'}
+                    onClick={() => setMobileOpen(false)}
+                    className={({ isActive }) =>
+                      cn(
+                        'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors [&>svg]:h-4 [&>svg]:w-4 [&>svg]:shrink-0',
+                        isActive
+                          ? 'bg-brand-50 text-brand-800 ring-1 ring-brand-200/70 dark:bg-brand-900/90 dark:text-sky-50 dark:ring-brand-500/55 [&>svg]:opacity-100 [&>svg]:text-current'
+                          : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-900/60 dark:hover:text-white [&>svg]:opacity-70',
+                      )
+                    }
+                  >
+                    <item.icon aria-hidden />
+                    {item.label}
+                  </NavLink>
+                ))}
+              </div>
+            ))}
+            <div className="border-t border-slate-200 pt-6 dark:border-slate-800">
+              <p className="px-3 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                Administration
+              </p>
               <NavLink
-                key={item.to}
-                to={item.to}
-                end={item.to === '/' || item.to === '/simulation'}
+                to={adminNav.to}
                 onClick={() => setMobileOpen(false)}
                 className={({ isActive }) =>
                   cn(
-                    'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors [&>svg]:h-4 [&>svg]:w-4 [&>svg]:shrink-0',
+                    'mt-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors [&>svg]:h-4 [&>svg]:w-4 [&>svg]:shrink-0',
                     isActive
-                      ? 'bg-brand-50 text-brand-800 ring-1 ring-brand-200/70 dark:bg-brand-900/90 dark:text-sky-50 dark:ring-brand-500/55 [&>svg]:opacity-100 [&>svg]:text-current'
+                      ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 [&>svg]:opacity-100 [&>svg]:text-current'
                       : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-900/60 dark:hover:text-white [&>svg]:opacity-70',
                   )
                 }
               >
-                <item.icon aria-hidden />
-                {item.label}
+                <adminNav.icon aria-hidden />
+                {adminNav.label}
               </NavLink>
-            ))}
-            <NavLink
-              to={adminNav.to}
-              onClick={() => setMobileOpen(false)}
-              className={({ isActive }) =>
-                cn(
-                  'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors [&>svg]:h-4 [&>svg]:w-4 [&>svg]:shrink-0',
-                  isActive
-                    ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 [&>svg]:opacity-100 [&>svg]:text-current'
-                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-900/60 dark:hover:text-white [&>svg]:opacity-70',
-                )
-              }
-            >
-              <adminNav.icon aria-hidden />
-              {adminNav.label}
-            </NavLink>
+            </div>
           </nav>
 
-          <div className="mt-10 rounded-2xl bg-gradient-to-br from-brand-600 to-brand-500 p-[1px] shadow-sm dark:from-brand-500 dark:to-brand-400">
-            <div className="rounded-2xl bg-surface-0/95 p-4 dark:bg-surface-0/90">
-              <p className="text-xs font-semibold uppercase tracking-wide text-brand-700 dark:text-sky-300">
+          <div className="mt-auto shrink-0 px-4 py-6 border-t border-slate-200/80 dark:border-slate-800">
+            <div className="rounded-2xl bg-brand-50/60 p-4 dark:bg-brand-900/40">
+              <p className="text-xs font-semibold uppercase tracking-wide text-brand-700 dark:text-brand-200">
                 Job-readiness OS
               </p>
-              <p className="mt-2 text-sm text-slate-700 dark:text-slate-200">
-                Simulations, skill maps, and opportunities in one disciplined flow
-                for IT and digital roles.
+              <p className="mt-2 text-xs text-slate-700 dark:text-slate-300">
+                Simulations, skill maps, and opportunities in one disciplined flow for IT and digital roles.
               </p>
             </div>
           </div>
@@ -151,7 +162,8 @@ export function AppShell() {
 
 function routeTitle(pathname: string) {
   if (pathname.startsWith('/simulation/run')) return 'Simulation run'
-  const sorted = [...mainNav].sort((a, b) => b.to.length - a.to.length)
+  const flatItems = mainNav.flatMap((group) => group.items)
+  const sorted = [...flatItems].sort((a, b) => b.to.length - a.to.length)
   const hit = sorted.find((n) => (n.to === '/' ? pathname === '/' : pathname === n.to || pathname.startsWith(`${n.to}/`)))
   if (hit) return hit.label
   if (pathname.startsWith('/admin')) return 'Admin'

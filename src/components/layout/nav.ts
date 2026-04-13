@@ -14,20 +14,47 @@ import {
   UserRound,
 } from 'lucide-react'
 
-export const mainNav = [
-  { to: '/', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/profile', label: 'Skill Passport', icon: UserRound },
-  { to: '/careers', label: 'Career Explorer', icon: Compass },
-  { to: '/simulation', label: 'Job Simulations', icon: Cpu },
-  { to: '/simulation/labs', label: 'Tool labs', icon: MonitorDot },
-  { to: '/tracking', label: 'Skill & Employability', icon: LineChart },
-  { to: '/opportunities', label: 'Opportunities', icon: Briefcase },
-  { to: '/learning', label: 'Learning Resources', icon: Sparkles },
-  { to: '/skill-gap', label: 'Skill Gap Analyzer', icon: Target },
-  { to: '/experience', label: 'Experience', icon: Layers },
-  { to: '/events', label: 'Event Ops', icon: CalendarRange },
-  { to: '/gamification', label: 'Achievements', icon: Award },
-] as const
+type NavItem = { to: string; label: string; icon: React.ComponentType<{ className?: string }> }
+
+type NavGroup = {
+  section: string
+  items: NavItem[]
+}
+
+export const mainNav: NavGroup[] = [
+  {
+    section: 'Core path',
+    items: [
+      { to: '/', label: 'Dashboard', icon: LayoutDashboard },
+      { to: '/careers', label: 'Career Explorer', icon: Compass },
+      { to: '/simulation', label: 'Job Simulations', icon: Cpu },
+      { to: '/simulation/labs', label: 'Tool labs', icon: MonitorDot },
+      { to: '/skill-gap', label: 'Skill Gap Analyzer', icon: Target },
+    ],
+  },
+  {
+    section: 'Evidence & progress',
+    items: [
+      { to: '/profile', label: 'Skill Passport', icon: UserRound },
+      { to: '/tracking', label: 'Skill & Employability', icon: LineChart },
+      { to: '/gamification', label: 'Achievements', icon: Award },
+    ],
+  },
+  {
+    section: 'Growth',
+    items: [
+      { to: '/opportunities', label: 'Opportunities', icon: Briefcase },
+      { to: '/learning', label: 'Learning Resources', icon: Sparkles },
+      { to: '/experience', label: 'Experience', icon: Layers },
+    ],
+  },
+  {
+    section: 'Specialized',
+    items: [
+      { to: '/events', label: 'Event Ops', icon: CalendarRange },
+    ],
+  },
+]
 
 export const adminNav = {
   to: '/admin',
