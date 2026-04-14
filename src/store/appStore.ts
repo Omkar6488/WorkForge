@@ -68,6 +68,7 @@ interface StoreActions {
   // Learning resources
   addLearningResource: (resource: LearningResource) => void
   markResourceCompleted: (studentId: string, resourceId: string) => void
+  recordResourceCompletion: (studentId: string, resourceId: string) => void
 }
 
 // ============================================================================
@@ -88,11 +89,13 @@ export const useAppStore = create<AppState & StoreActions>((set: any) => ({
   mentors: [],
   microInternships: [],
   liveProjects: [],
+  skills: [],
   taskCompletions: [],
   simulationRuns: [],
   applications: [],
   experienceRecords: [],
   portfolioItems: [],
+  resourceCompletions: [],
 
   // ========================================================================
   // INITIALIZATION
@@ -253,4 +256,16 @@ export const useAppStore = create<AppState & StoreActions>((set: any) => ({
           : r
       ),
     })),
+
+  recordResourceCompletion: (studentId: string, resourceId: string) =>
+    set((state: any) => {
+      const completion = {
+        studentId,
+        resourceId,
+        completedAt: new Date().toISOString(),
+      }
+      return {
+        resourceCompletions: [...state.resourceCompletions, completion],
+      }
+    }),
 }))

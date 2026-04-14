@@ -13,7 +13,7 @@ export type StageId = 'learn' | 'simulate' | 'project' | 'internship' | 'job'
 
 export type StageStatus = 'upcoming' | 'active' | 'done'
 
-export type OpportunityType = 'internship' | 'job' | 'micro'
+export type OpportunityType = 'internship' | 'job' | 'micro' | 'workshop' | 'challenge' | 'mentorship' | 'industrial-visit' | 'mini-project'
 
 export type SimulationStepType = 'mcq' | 'text' | 'code'
 
@@ -121,6 +121,11 @@ export interface Task {
   stage?: StageId
   lastUpdated: string
   description?: string
+  skillsCovered?: string[]
+  estimatedTimeMin?: number
+  prerequisites?: string[] // task IDs
+  createdAt?: string
+  updatedAt?: string
 }
 
 export interface StudentTaskCompletion {
@@ -177,15 +182,25 @@ export interface StudentSimulationRun {
 export interface LearningResource {
   id: string
   title: string
-  kind: 'Video' | 'Course' | 'Article' | 'Documentation'
+  kind: 'Video' | 'Course' | 'Article' | 'Documentation' | 'PDF' | 'External'
   provider: string
   duration: string
   roleIds: RoleId[]
   skills: string[]
   stage?: StageId
+  difficulty?: DifficultyLevel
   href: string
   completedBy?: string[] // student IDs
+  createdAt?: string
+  updatedAt?: string
 }
+
+export interface StudentLearningResourceCompletion {
+  studentId: string
+  resourceId: string
+  completedAt: string
+}
+
 
 // ============================================================================
 // OPPORTUNITIES
@@ -206,6 +221,17 @@ export interface Opportunity {
   matchPct?: number
   eligibilityRequirements?: string[]
   stage?: StageId
+  applicationDeadline?: string
+  duration?: string
+  durationUnit?: 'days' | 'weeks' | 'months'
+  rewards?: {
+    certificate?: boolean
+    stipend?: string
+    badge?: string
+    xp?: number
+  }
+  externalLink?: string // for Internshala, Unstop, etc.
+  isInternal: boolean // managed in-app vs external link
   createdAt?: string
   updatedAt?: string
 }
@@ -218,6 +244,8 @@ export interface Application {
   appliedAt: string
   respondedAt?: string
   notes?: string
+  feedback?: string
+  feedbackSummary?: string
 }
 
 // ============================================================================
@@ -236,6 +264,8 @@ export interface ExperienceRecord {
   skills?: string[]
   completedAt?: string
   relatedSimulationId?: string
+  relatedOpportunityId?: string // track which opportunity created this
+  type?: 'micro-internship' | 'project' | 'live-project' | 'workshop' | 'challenge' | 'mentorship'
 }
 
 export interface PortfolioItem {
@@ -368,6 +398,7 @@ export interface AppState {
   mentors: Mentor[]
   microInternships: MicroInternship[]
   liveProjects: LiveProject[]
+  skills: SkillLevel[]
 
   // Student-specific tracking
   taskCompletions: StudentTaskCompletion[]
@@ -375,6 +406,7 @@ export interface AppState {
   applications: Application[]
   experienceRecords: ExperienceRecord[]
   portfolioItems: PortfolioItem[]
+  resourceCompletions: StudentLearningResourceCompletion[]
 
   // Derived/computed (not stored, computed via selectors)
   // employabilityMetrics, careerPath, etc. computed on demand

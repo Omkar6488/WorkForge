@@ -369,3 +369,6 @@ export * from './timeline'
 
 // Import and re-export dashboard metrics
 export * from './dashboard'
+
+// Import and re-export student-facing selectors (admin content filtered by profile)
+export * from './student'
