@@ -2,33 +2,14 @@ import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
 import { PageHeader } from '@/components/ui/PageHeader'
-import { adminStudents, opportunities, simulations } from '@/data/mock'
+import { useAppStore } from '@/store/appStore'
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { useTheme } from '@/context/useTheme'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { AlertCircle, CheckCircle2, Clock, TrendingUp } from 'lucide-react'
 
 const tabs = ['Tasks', 'Simulations', 'Opportunities', 'Analytics'] as const
 type Tab = (typeof tabs)[number]
-
-// REBUILT: Mock task data
-const mockTasks = [
-  { id: 't1', title: 'API Rate Limiting Review', role: 'Backend', skill: 'REST APIs', difficulty: 'Intermediate', status: 'Active' as const, lastUpdated: '2 days ago' },
-  { id: 't2', title: 'React Suspense Patterns', role: 'Frontend', skill: 'React', difficulty: 'Advanced', status: 'Active' as const, lastUpdated: '1 week ago' },
-  { id: 't3', title: 'SQL Window Functions Deep Dive', role: 'Data', skill: 'SQL', difficulty: 'Intermediate', status: 'Pending Review' as const, lastUpdated: '3 days ago' },
-  { id: 't4', title: 'Incident Communication Templates', role: 'Communication', skill: 'Stakeholder Comms', difficulty: 'Beginner', status: 'Draft' as const, lastUpdated: '5 days ago' },
-  { id: 't5', title: 'Legacy Database Migration', role: 'Backend', skill: 'Databases', difficulty: 'Advanced', status: 'Deprecated' as const, lastUpdated: '2 weeks ago' },
-  { id: 't6', title: 'CSS Grid vs Flexbox Mastery', role: 'Frontend', skill: 'Web Design', difficulty: 'Beginner', status: 'Active' as const, lastUpdated: '1 day ago' },
-]
-
-// REBUILT: Enhanced simulation data
-const enhancedSimulations = simulations.map((s) => ({
-  ...s,
-  skillsMapped: s.roleId === 'frontend' ? 'React, Testing' : s.roleId === 'backend' ? 'REST APIs, Security' : 'SQL, Visualization',
-  completionRate: s.roleId === 'frontend' ? 72 : s.roleId === 'backend' ? 68 : 74,
-  avgScore: s.roleId === 'frontend' ? 76 : s.roleId === 'backend' ? 71 : 79,
-  impact: s.difficulty === 'Intermediate' ? 'High' : 'Medium',
-}))
 
 const getStatusColor = (status: string): 'brand' | 'success' | 'warning' | 'neutral' => {
   switch (status) {
@@ -49,6 +30,31 @@ export function AdminPage() {
   const axis = theme === 'dark' ? '#94a3b8' : '#64748b'
   const grid = theme === 'dark' ? '#1e293b' : '#e2e8f0'
 
+  // ===== NEW ARCHITECTURE: Read from centralized store =====
+  const tasks = useAppStore((state: any) => state.tasks)
+  const simulations = useAppStore((state: any) => state.simulations)
+  const opportunities = useAppStore((state: any) => state.opportunities)
+
+  // Seed admin students (in real app, come from store)
+  const adminStudents = [
+    { id: 'u1', name: 'Omkar Sharma', simulations: 6, employability: 78, lastActive: 'Today' },
+    { id: 'u2', name: 'Rahul Verma', simulations: 3, employability: 62, lastActive: 'Yesterday' },
+    { id: 'u3', name: 'Meera Iyer', simulations: 9, employability: 86, lastActive: 'Today' },
+  ]
+
+  // Enhance simulations with metrics
+  const enhancedSimulations = useMemo(
+    () =>
+      simulations.map((s: any) => ({
+        ...s,
+        skillsMapped: s.roleId === 'frontend' ? 'React, Testing' : s.roleId === 'backend' ? 'REST APIs, Security' : 'SQL, Visualization',
+        completionRate: s.roleId === 'frontend' ? 72 : s.roleId === 'backend' ? 68 : 74,
+        avgScore: s.roleId === 'frontend' ? 76 : s.roleId === 'backend' ? 71 : 79,
+        impact: s.difficulty === 'Intermediate' ? 'High' : 'Medium',
+      })),
+    [simulations]
+  )
+
   // REFINED: Filter states
   const [taskRoleFilter, setTaskRoleFilter] = useState<string>('All')
   const [simRoleFilter, setSimRoleFilter] = useState<string>('All')
@@ -57,31 +63,42 @@ export function AdminPage() {
   const [activityFilter, setActivityFilter] = useState<string>('All')
 
   // REBUILT: Operations metrics
-  const pendingReviews = mockTasks.filter(t => t.status === 'Pending Review').length
-  const activeSimulations = enhancedSimulations.length
+  const pendingReviews = tasks.filter((t: any) => t.status === 'Pending Review').length
+  const activeSimulations = simulations.length
   const readyCount = adminStudents.filter(s => s.employability >= 80).length
   const atRiskStudents = adminStudents.filter(s => s.employability < 60).length
 
-  const filteredTasks = mockTasks.filter((t) => {
-    const roleMatch = taskRoleFilter === 'All' || t.role === taskRoleFilter
-    return roleMatch
-  })
+  const filteredTasks = useMemo(
+    () =>
+      tasks.filter((t: any) => {
+        const roleMatch = taskRoleFilter === 'All' || t.role === taskRoleFilter
+        return roleMatch
+      }),
+    [tasks, taskRoleFilter]
+  )
 
-  const filteredSims = enhancedSimulations.filter((s) => {
-    const roleMatch = simRoleFilter === 'All' || s.roleId === simRoleFilter
-    const diffMatch = simDifficultyFilter === 'All' || s.difficulty === simDifficultyFilter
-    return roleMatch && diffMatch
-  })
+  const filteredSims = useMemo(
+    () =>
+      enhancedSimulations.filter((s: any) => {
+        const roleMatch = simRoleFilter === 'All' || s.roleId === simRoleFilter
+        const diffMatch = simDifficultyFilter === 'All' || s.difficulty === simDifficultyFilter
+        return roleMatch && diffMatch
+      }),
+    [enhancedSimulations, simRoleFilter, simDifficultyFilter]
+  )
 
-  const filteredStudents = adminStudents.filter((s) => {
-    const empMatch = 
-      empRangeFilter === 'All' ||
-      (empRangeFilter === 'High' && s.employability >= 80) ||
-      (empRangeFilter === 'Medium' && s.employability >= 60 && s.employability < 80) ||
-      (empRangeFilter === 'Low' && s.employability < 60)
-    // Activity filter is just for UI; all students match for now
-    return empMatch
-  })
+  const filteredStudents = useMemo(
+    () =>
+      adminStudents.filter((s: any) => {
+        const empMatch = 
+          empRangeFilter === 'All' ||
+          (empRangeFilter === 'High' && s.employability >= 80) ||
+          (empRangeFilter === 'Medium' && s.employability >= 60 && s.employability < 80) ||
+          (empRangeFilter === 'Low' && s.employability < 60)
+        return empMatch
+      }),
+    [adminStudents, empRangeFilter]
+  )
 
   return (
     <div className="space-y-6">
@@ -158,7 +175,7 @@ export function AdminPage() {
             <div>
               <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Task Management</h2>
               <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                {filteredTasks.length} tasks · {mockTasks.filter(t => t.status === 'Active').length} active · {pendingReviews} pending
+                {filteredTasks.length} tasks · {tasks.filter((t: any) => t.status === 'Active').length} active · {pendingReviews} pending
               </p>
             </div>
             <div className="flex gap-2 flex-wrap">
@@ -195,7 +212,7 @@ export function AdminPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                  {filteredTasks.map((t) => (
+                  {filteredTasks.map((t: any) => (
                     <tr key={t.id} className="text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900/30">
                       <td className="px-6 py-3 font-medium text-slate-900 dark:text-white">{t.title}</td>
                       <td className="px-6 py-3 text-xs">{t.role}</td>
@@ -248,7 +265,7 @@ export function AdminPage() {
               <div className="px-4 py-3">
                 <p className="text-xs text-slate-600 dark:text-slate-400 uppercase font-semibold">High Impact</p>
                 <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">
-                  {enhancedSimulations.filter(s => s.impact === 'High').length}
+                  {enhancedSimulations.filter((s: any) => s.impact === 'High').length}
                 </p>
               </div>
             </Card>
@@ -256,7 +273,7 @@ export function AdminPage() {
               <div className="px-4 py-3">
                 <p className="text-xs text-slate-600 dark:text-slate-400 uppercase font-semibold">Avg Complete</p>
                 <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">
-                  {Math.round(enhancedSimulations.reduce((sum, s) => sum + s.completionRate, 0) / enhancedSimulations.length)}%
+                  {Math.round(enhancedSimulations.reduce((sum: any, s: any) => sum + s.completionRate, 0) / enhancedSimulations.length)}%
                 </p>
               </div>
             </Card>
@@ -264,7 +281,7 @@ export function AdminPage() {
               <div className="px-4 py-3">
                 <p className="text-xs text-slate-600 dark:text-slate-400 uppercase font-semibold">Avg Score</p>
                 <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">
-                  {Math.round(enhancedSimulations.reduce((sum, s) => sum + s.avgScore, 0) / enhancedSimulations.length)}
+                  {Math.round(enhancedSimulations.reduce((sum: any, s: any) => sum + s.avgScore, 0) / enhancedSimulations.length)}
                 </p>
               </div>
             </Card>
@@ -309,7 +326,7 @@ export function AdminPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                  {filteredSims.map((s) => (
+                  {filteredSims.map((s: any) => (
                     <tr key={s.id} className="text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900/30">
                       <td className="px-6 py-3 font-medium text-slate-900 dark:text-white">{s.title}</td>
                       <td className="px-6 py-3 text-xs capitalize">{s.roleId}</td>
@@ -352,7 +369,7 @@ export function AdminPage() {
 
           <Card>
             <ul className="divide-y divide-slate-100 dark:divide-slate-800">
-              {opportunities.map((o, idx) => {
+              {opportunities.map((o: any, idx: any) => {
                 const statuses = ['Approved', 'Pending', 'Closing Soon', 'Approved']
                 const status = statuses[idx % statuses.length]
                 const newness = idx === 0 ? 'New' : idx === opportunities.length - 1 ? 'Closing Soon' : undefined

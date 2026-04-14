@@ -1,7 +1,6 @@
 import {
   Award,
   Briefcase,
-  CalendarRange,
   Compass,
   Layers,
   Cpu,
@@ -46,12 +45,6 @@ export const mainNav: NavGroup[] = [
       { to: '/opportunities', label: 'Opportunities', icon: Briefcase },
       { to: '/learning', label: 'Learning Resources', icon: Sparkles },
       { to: '/experience', label: 'Experience', icon: Layers },
-    ],
-  },
-  {
-    section: 'Specialized',
-    items: [
-      { to: '/events', label: 'Event Ops', icon: CalendarRange },
     ],
   },
 ]

@@ -1,11 +1,10 @@
+import React from 'react'
 import { SkillGrowthChart } from '@/components/charts/SkillGrowthChart'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
-import {
-  skillPassport,
-  studentProfile,
-} from '@/data/mock'
+import { useAppStore } from '@/store/appStore'
+import { getWeakestSkill, getSkillZone, calculateEmployabilityScore } from '@/selectors'
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 
@@ -23,25 +22,30 @@ const item = {
   show: { opacity: 1, y: 0 },
 }
 
+const SEED_SKILLS = [
+  { skillId: 'react', label: 'React', level: 72, category: 'Frontend' as const },
+  { skillId: 'ts', label: 'TypeScript', level: 64, category: 'Engineering' as const },
+  { skillId: 'sql', label: 'SQL', level: 58, category: 'Data' as const },
+  { skillId: 'api', label: 'REST APIs', level: 61, category: 'Backend' as const },
+  { skillId: 'seo', label: 'SEO & Analytics', level: 45, category: 'Marketing' as const },
+  { skillId: 'comm', label: 'Stakeholder Comms', level: 70, category: 'Professional' as const },
+]
+
 export function DashboardPage() {
-  // REMOVED: Post-action feedback state (excessive feedback noise)
-  // SIMPLIFIED: Removed consistency streak state (gamification-driven)
+  // ===== NEW ARCHITECTURE: Read from centralized store =====
+  const skills = useAppStore((_state: any) => _state.skills || SEED_SKILLS)
 
-  // REFINED: Simplified data derivation (removed excessive categorization)
-  const weakestSkill = skillPassport.reduce((prev, curr) =>
-    curr.level < prev.level ? curr : prev
+  // ===== DERIVED DATA: Computed from store using selectors =====
+  const weakestSkill = getWeakestSkill(skills) || skills[0]
+  const employabilityScore = calculateEmployabilityScore(skills)
+
+  const skillsWithZone = React.useMemo(() => 
+    skills.map((skill: any) => ({
+      ...skill,
+      zone: getSkillZone(skill.level),
+    })),
+    [skills]
   )
-
-  // SIMPLIFIED: Single list of skills with neutral status labels
-  const skillsWithZone = skillPassport.map((skill) => ({
-    ...skill,
-    zone:
-      skill.level >= 70
-        ? 'Strong'
-        : skill.level >= 50
-          ? 'Moderate'
-          : 'Priority',
-  }))
 
   // REMOVED: Opportunity psychology metrics (overly gamified)
 
@@ -78,7 +82,7 @@ export function DashboardPage() {
           {/* ROW 2: Inline status + time estimate */}
           <div className="flex items-center gap-3 text-sm">
             <span className="text-slate-600 dark:text-slate-300">
-              Score: <span className="font-semibold text-slate-900 dark:text-white">{studentProfile.employabilityScore}</span> / 100
+              Score: <span className="font-semibold text-slate-900 dark:text-white">{employabilityScore}</span> / 100
             </span>
             <span className="text-slate-400 dark:text-slate-500">•</span>
             <span className="text-slate-600 dark:text-slate-300">
@@ -134,7 +138,7 @@ export function DashboardPage() {
                     {weakestSkill.label}
                   </p>
                   <p className="text-2xl font-bold text-slate-900 dark:text-white">
-                    {skillPassport.find(s => s.label === weakestSkill.label)?.level || 0}%
+                    {skills.find((s: any) => s.label === weakestSkill?.label)?.level || 0}%
                   </p>
                   <p className="text-sm text-slate-600 dark:text-slate-400">
                     Required for next stage: 65%+
@@ -157,7 +161,7 @@ export function DashboardPage() {
                   <ul className="text-sm text-slate-700 dark:text-slate-300 space-y-1 mt-2">
                     <li className="flex items-start gap-2">
                       <span className="text-slate-400 dark:text-slate-500 mt-0.5">•</span>
-                      <span>{weakestSkill.label} at 65%+ (currently {skillPassport.find(s => s.label === weakestSkill.label)?.level || 0}%)</span>
+                      <span>{weakestSkill?.label} at 65%+ (currently {skills.find((s: any) => s.label === weakestSkill?.label)?.level || 0}%)</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-slate-400 dark:text-slate-500 mt-0.5">•</span>
@@ -174,8 +178,8 @@ export function DashboardPage() {
                 Skill profile
               </p>
               <div className="space-y-2">
-                {skillsWithZone.slice(0, 5).map((skill) => (
-                  <div key={skill.id} className="space-y-1">
+                {skillsWithZone.slice(0, 5).map((skill: any) => (
+                  <div key={skill.skillId} className="space-y-1">
                     <div className="flex items-center justify-between">
                       <p className="text-sm font-medium text-slate-800 dark:text-slate-100">
                         {skill.label}
