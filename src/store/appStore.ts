@@ -29,6 +29,7 @@ import {
   seedMicroInternships,
   seedLiveProjects,
   seedMentors,
+  seedSkillPassport,
 } from '@/data/seed'
 
 // ============================================================================
@@ -111,6 +112,7 @@ export const useAppStore = create<AppState & StoreActions>((set: any) => ({
       mentors: seedMentors,
       microInternships: seedMicroInternships,
       liveProjects: seedLiveProjects,
+      skills: seedSkillPassport,
     })
   },
 

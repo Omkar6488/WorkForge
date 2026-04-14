@@ -347,3 +347,25 @@ export function calculateAdminAnalytics(
     generatedAt: new Date().toISOString(),
   }
 }
+
+// ============================================================================
+// NEW PROGRESSION ENGINE - Re-export from specialized selectors
+// ============================================================================
+
+// Import and re-export progression selectors
+export * from './progression'
+
+// Import and re-export employability selectors
+export * from './employability'
+
+// Import and re-export skill gap selectors
+export * from './gaps'
+
+// Import and re-export opportunity eligibility selectors
+export * from './opportunities'
+
+// Import and re-export timeline selectors
+export * from './timeline'
+
+// Import and re-export dashboard metrics
+export * from './dashboard'

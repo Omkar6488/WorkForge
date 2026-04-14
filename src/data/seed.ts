@@ -89,8 +89,8 @@ export const seedSkillPassport: SkillLevel[] = [
   { skillId: 'ts', label: 'TypeScript', level: 64, category: 'Engineering' },
   { skillId: 'sql', label: 'SQL', level: 58, category: 'Data' },
   { skillId: 'api', label: 'REST APIs', level: 61, category: 'Backend' },
-  { skillId: 'seo', label: 'SEO & Analytics', level: 45, category: 'Marketing' },
   { skillId: 'comm', label: 'Stakeholder Comms', level: 70, category: 'Professional' },
+  { skillId: 'seo', label: 'SEO & Analytics', level: 45, category: 'Marketing' },
 ]
 
 // ============================================================================
@@ -504,6 +504,8 @@ export const seedLiveProjects: LiveProject[] = [
     roleId: 'backend',
   },
 ]
+
+
 
 // ============================================================================
 // MENTORS
