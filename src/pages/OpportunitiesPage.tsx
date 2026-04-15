@@ -4,6 +4,7 @@ import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/Ca
 import { EmptyState } from '@/components/ui/EmptyState'
 import { PageHeader } from '@/components/ui/PageHeader'
 import { opportunities, roles, type OpportunityType, type RoleId } from '@/data/mock'
+import { useAppStore } from '@/store/appStore'
 import { Briefcase, MapPin, Radio, Search } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
@@ -11,7 +12,10 @@ export function OpportunitiesPage() {
   const [skillQ, setSkillQ] = useState('')
   const [roleId, setRoleId] = useState<RoleId | 'all'>('all')
   const [type, setType] = useState<OpportunityType | 'all'>('all')
-  const [errorDemo, setErrorDemo] = useState(false)
+
+  // Get completion tracking from store
+  const currentUser = useAppStore((s: any) => s.currentUser)
+  const applications = useAppStore((s: any) => s.applications ?? [])
 
   const filtered = useMemo(() => {
     return opportunities.filter((o) => {
@@ -30,27 +34,26 @@ export function OpportunitiesPage() {
     [filtered],
   )
 
+  const handleApply = (opportunityId: string) => {
+    if (currentUser) {
+      useAppStore.getState().applyToOpportunity(currentUser.id, opportunityId)
+    }
+  }
+
+  const hasApplied = (opportunityId: string) => {
+    if (!currentUser) return false
+    return applications.some(
+      (a: any) => a.studentId === currentUser.id && a.opportunityId === opportunityId
+    )
+  }
+
   return (
     <div className="space-y-10">
       <PageHeader
         eyebrow="Opportunities"
         title="Internships, roles, and micro-internships — filtered by skills you can prove."
-        description="These listings are static mocks with realistic structure: mode, compensation band, and skill tags you already track in WorkForge."
-        action={
-          <Button variant="secondary" onClick={() => setErrorDemo((v) => !v)}>
-            Toggle error banner (demo)
-          </Button>
-        }
+        description="Browse real opportunities from verified employers. Your match score shows how well your current skills align with role requirements."
       />
-
-      {errorDemo ? (
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-50">
-          <p className="font-semibold">Upstream feed degraded (mock)</p>
-          <p className="mt-1 text-xs opacity-90">
-            Some employer logos failed to load. You can still shortlist and export your packet — retry sync in a real backend integration.
-          </p>
-        </div>
-      ) : null}
 
       <Card>
         <CardHeader>
@@ -105,7 +108,7 @@ export function OpportunitiesPage() {
         <EmptyState
           icon={Briefcase}
           title="No matches for this filter mix"
-          description="Relax role or skill filters — WorkForge keeps your tags broad enough to discover adjacent opportunities."
+          description="Adjust your skill search, role, or type filter to discover more opportunities that align with your profile."
           actionLabel="Reset filters"
           onAction={() => {
             setSkillQ('')
@@ -156,8 +159,15 @@ export function OpportunitiesPage() {
                 {o.stipendOrSalary}
               </p>
               <div className="mt-5 flex flex-wrap gap-2 border-t border-slate-100 pt-4 dark:border-slate-800">
-                <Button>Open details (mock)</Button>
-                <Button variant="secondary">Save shortlist</Button>
+                {currentUser && (
+                  <Button
+                    onClick={() => handleApply(o.id)}
+                    disabled={hasApplied(o.id)}
+                  >
+                    {hasApplied(o.id) ? 'Applied ✓' : 'Apply now'}
+                  </Button>
+                )}
+                <Button variant="secondary">View details</Button>
               </div>
             </Card>
           ))}

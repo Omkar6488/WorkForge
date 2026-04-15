@@ -2,7 +2,6 @@ import { AppShell } from '@/components/layout/AppShell'
 import { AdminPage } from '@/pages/AdminPage'
 import { CareersPage } from '@/pages/CareersPage'
 import { DashboardPage } from '@/pages/DashboardPage'
-import { EventsOpsPage } from '@/pages/EventsOpsPage'
 import { ExperiencePage } from '@/pages/ExperiencePage'
 import { GamificationPage } from '@/pages/GamificationPage'
 import { LearningPage } from '@/pages/LearningPage'
@@ -14,9 +13,17 @@ import { SimulationLabsPage } from '@/pages/SimulationLabsPage'
 import { SimulationRunPage } from '@/pages/SimulationRunPage'
 import { SkillGapPage } from '@/pages/SkillGapPage'
 import { TrackingPage } from '@/pages/TrackingPage'
+import { useAppStore } from '@/store/appStore'
 import { Route, Routes } from 'react-router-dom'
+import { useEffect } from 'react'
 
 export default function App() {
+  const initializeStore = useAppStore((state: any) => state.initializeStore)
+
+  useEffect(() => {
+    initializeStore()
+  }, [initializeStore])
+
   return (
     <Routes>
       <Route element={<AppShell />}>
@@ -27,7 +34,6 @@ export default function App() {
         <Route path="simulation/run/:simulationId" element={<SimulationRunPage />} />
         <Route path="simulation" element={<SimulationHubPage />} />
         <Route path="experience" element={<ExperiencePage />} />
-        <Route path="events" element={<EventsOpsPage />} />
         <Route path="tracking" element={<TrackingPage />} />
         <Route path="opportunities" element={<OpportunitiesPage />} />
         <Route path="learning" element={<LearningPage />} />
