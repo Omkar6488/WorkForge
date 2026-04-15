@@ -12,11 +12,9 @@ import type {
   StudentSimulationRun,
   Opportunity,
   Application,
-  ExperienceRecord,
   StageId,
 } from '@/domain/types'
 import {
-  STAGE_ADVANCEMENT_RULES,
   STAGE_WEIGHTS,
   getAdvancementRule,
 } from '@/config/scoring'
@@ -100,9 +98,10 @@ export function getCompletedTasksForStage(
       .map((c) => c.taskId)
   )
 
-  return Array.from(stageTaskIds).filter((id) =>
-    studentCompletedIds.has(id)
-  )
+  return Array.from(stageTaskIds)
+    .filter((id) => studentCompletedIds.has(id))
+    .map((id) => tasks.find((t) => t.id === id)!)
+    .filter((t) => !!t)
 }
 
 /**
@@ -147,7 +146,7 @@ export function calculateStageCompletion(
   const stageTasks = getTasksForStage(tasks, stageId)
   const stageSimulations = roleId
     ? getSimulationsForRole(simulations, roleId).filter(
-        (s) => s.stageId === stageId || stageId === 'simulate'
+        (s) => s.stage === stageId || stageId === 'simulate'
       )
     : []
 
@@ -186,8 +185,8 @@ export function getStudentCurrentStage(
   studentId: string,
   tasks: Task[],
   simulations: Simulation[],
-  opportunities: Opportunity[],
-  applications: Application[],
+  _opportunities: Opportunity[],
+  _applications: Application[],
   completions: StudentTaskCompletion[],
   simulationRuns: StudentSimulationRun[],
   roleId?: string
@@ -199,24 +198,26 @@ export function getStudentCurrentStage(
     const rule = getAdvancementRule(from as any)
     if (!rule) return false
 
-    // Check task completion
-    const stageTasks = getTasksForStage(tasks, from)
-    if (stageTasks.length > 0) {
-      const completed = getCompletedTasksForStage(
-        from,
-        studentId,
-        tasks,
-        completions
-      )
-      const completionRate = completed.length / stageTasks.length
+    // Check task completion (if applicable for this stage)
+    if ('minTaskCompletion' in rule) {
+      const stageTasks = getTasksForStage(tasks, from)
+      if (stageTasks.length > 0) {
+        const completed = getCompletedTasksForStage(
+          from,
+          studentId,
+          tasks,
+          completions
+        )
+        const completionRate = completed.length / stageTasks.length
 
-      if (completionRate < rule.minTaskCompletion) {
-        return false
+        if (completionRate < rule.minTaskCompletion) {
+          return false
+        }
       }
     }
 
     // Check simulation requirements if applicable
-    if (from === 'simulate' && rule.minSimulationCompletion) {
+    if (from === 'simulate' && 'minSimulationCompletion' in rule) {
       const stageSimulations = getSimulationsForRole(simulations, roleId || '')
         .length
       if (stageSimulations > 0) {
@@ -279,29 +280,31 @@ export function canAdvanceToNextStage(
 
   const blockers: string[] = []
 
-  // Check task completion
-  const stageTasks = getTasksForStage(tasks, currentStage)
-  if (stageTasks.length > 0) {
-    const completed = getCompletedTasksForStage(
-      currentStage,
-      studentId,
-      tasks,
-      completions
-    )
-    const completionRate = completed.length / stageTasks.length
-    const requiredCount = Math.ceil(
-      stageTasks.length * rule.minTaskCompletion
-    )
-
-    if (completed.length < requiredCount) {
-      blockers.push(
-        `Complete ${requiredCount} learning tasks (${completed.length}/${requiredCount})`
+  // Check task completion (if applicable for this stage)  
+  if ('minTaskCompletion' in rule) {
+    const stageTasks = getTasksForStage(tasks, currentStage)
+    if (stageTasks.length > 0) {
+      const completed = getCompletedTasksForStage(
+        currentStage,
+        studentId,
+        tasks,
+        completions
       )
+      const completionRate = completed.length / stageTasks.length
+      const requiredCount = Math.ceil(
+        stageTasks.length * rule.minTaskCompletion
+      )
+
+      if (completed.length < requiredCount) {
+        blockers.push(
+          `Complete ${requiredCount} learning tasks (${completed.length}/${requiredCount})`
+        )
+      }
     }
   }
 
   // Check simulation requirements
-  if (rule.minSimulationCompletion) {
+  if ('minSimulationCompletion' in rule) {
     const stageSimulations = getSimulationsForRole(simulations, roleId || '')
     if (stageSimulations.length > 0) {
       const completed = simulationRuns.filter(
@@ -320,7 +323,7 @@ export function canAdvanceToNextStage(
   }
 
   // Check skill requirements
-  if (rule.minSkillThreshold) {
+  if ('minSkillThreshold' in rule) {
     const weakSkills = skills.filter((s) => s.level < rule.minSkillThreshold * 100)
     if (weakSkills.length > 0) {
       blockers.push(
@@ -354,7 +357,7 @@ export function getStageSummary(
   const stageTasks = getTasksForStage(tasks, stageId)
   const stageSimulations = roleId
     ? getSimulationsForRole(simulations, roleId).filter(
-        (s) => s.stageId === stageId || stageId === 'simulate'
+        (s) => s.stage === stageId || stageId === 'simulate'
       )
     : []
 
@@ -559,3 +562,4 @@ export function getNextRecommendedActions(
 
   return actions.slice(0, 3) // Return top 3 actions
 }
+

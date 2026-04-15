@@ -217,60 +217,17 @@ export function analyzeSkillGaps(
 function createSkillRecommendation(gap: SkillGap): SkillGapRecommendation {
   const baseHours = (gap.gap / 10) * 20 // ~20 hours per 10% gap
 
-  const recommendations: Record<string, SkillGapRecommendation> = {
-    react_low: {
-      skillName: 'React',
-      action: 'Complete React Fundamentals course + build 2 projects',
-      estimatedHours: 40,
-      resources: [
-        'React Official Tutorial',
-        'Build a Todo App',
-        'Build a Weather App',
-      ],
-      priority: gap.priority,
-    },
-    typescript_low: {
-      skillName: 'TypeScript',
-      action: 'Learn TypeScript basics and apply to existing projects',
-      estimatedHours: 25,
-      resources: [
-        'TypeScript Handbook',
-        'Typing Exercises',
-        'Refactor Project in TS',
-      ],
-      priority: gap.priority,
-    },
-    restapis_low: {
-      skillName: 'REST APIs',
-      action: 'Build a backend with Node + Express, create client',
-      estimatedHours: 35,
-      resources: [
-        'REST API Principles',
-        'Build Real API',
-        'integrate into Frontend',
-      ],
-      priority: gap.priority,
-    },
-    sql_low: {
-      skillName: 'SQL',
-      action: 'Learn database design and SQL queries',
-      estimatedHours: 30,
-      resources: [
-        'SQL Basics',
-        'Database Design',
-        'Query Exercises',
-      ],
-      priority: gap.priority,
-    },
-  }
+  // Map low priority to medium for recommendations (not exposed to users)
+  const recommendationPriority: 'critical' | 'high' | 'medium' = 
+    gap.priority === 'low' ? 'medium' : gap.priority
 
-  // Return generic recommendation if no specific plan
+  // Return generic recommendation for improving skill gap
   return {
     skillName: gap.skillName,
     action: `Improve ${gap.skillName} from ${gap.currentLevel}% to ${gap.requiredLevel}%`,
     estimatedHours: Math.round(baseHours),
     resources: ['Relevant courses', 'Practice projects', 'Peer review'],
-    priority: gap.priority,
+    priority: recommendationPriority,
   }
 }
 

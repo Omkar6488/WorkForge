@@ -265,7 +265,7 @@ export function getEligibleOpportunities(
 /**
  * Get recommended opportunities (high match %)
  */
-export function getRecommendedOpportunities(
+export function getMatchedOpportunities(
   studentId: string,
   opportunities: Opportunity[],
   skills: SkillLevel[],
@@ -304,8 +304,8 @@ export function getResourcesForStudent(
 ): LearningResource[] {
   if (!studentProfile) return []
   
-  let filtered = resources.filter((r) => r.roleIds.includes(studentProfile.id))
-  
+  // Filter resources by stage if provided
+  let filtered = resources
   if (currentStage) {
     filtered = filtered.filter((r) => !r.stage || r.stage === currentStage)
   }

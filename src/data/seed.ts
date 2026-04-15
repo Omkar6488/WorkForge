@@ -309,6 +309,7 @@ export const seedOpportunities: Opportunity[] = [
     status: 'Approved',
     matchPct: 91,
     eligibilityRequirements: ['React 70%+', 'TypeScript 60%+'],
+    isInternal: true,
   },
   {
     id: 'o2',
@@ -323,6 +324,7 @@ export const seedOpportunities: Opportunity[] = [
     posted: '1w ago',
     status: 'Pending',
     matchPct: 74,
+    isInternal: true,
   },
   {
     id: 'o3',
@@ -337,6 +339,7 @@ export const seedOpportunities: Opportunity[] = [
     posted: '5d ago',
     status: 'Approved',
     matchPct: 86,
+    isInternal: true,
   },
   {
     id: 'o4',
@@ -351,6 +354,7 @@ export const seedOpportunities: Opportunity[] = [
     posted: '2d ago',
     status: 'Approved',
     matchPct: 62,
+    isInternal: true,
   },
   {
     id: 'o5',
@@ -365,6 +369,7 @@ export const seedOpportunities: Opportunity[] = [
     posted: '4d ago',
     status: 'Closing Soon',
     matchPct: 88,
+    isInternal: true,
   },
   {
     id: 'o6',
@@ -379,6 +384,7 @@ export const seedOpportunities: Opportunity[] = [
     posted: 'Today',
     status: 'Approved',
     matchPct: 79,
+    isInternal: true,
   },
 ]
 

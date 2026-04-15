@@ -3,6 +3,7 @@ import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/Ca
 import { PageHeader } from '@/components/ui/PageHeader'
 import { learningResources, roles, type RoleId } from '@/data/mock'
 import { useAppStore } from '@/store/appStore'
+import type { DifficultyLevel, LearningResource } from '@/domain/types'
 import { BookOpen, Play, StickyNote } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
@@ -94,6 +95,7 @@ export function LearningPage() {
         {filtered.map((res) => {
           const Icon = kindIcon[res.kind]
           const isCompleted = completedIds.has(res.id)
+          const resWithDifficulty = res as LearningResource & { difficulty?: DifficultyLevel }
           return (
             <Card key={res.id} className={`flex flex-col transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-float)] ${isCompleted ? 'opacity-75' : ''}`}>
               <div className="flex items-start gap-3">
@@ -105,13 +107,13 @@ export function LearningPage() {
                     <Badge tone="neutral">
                       {res.kind}
                     </Badge>
-                    {res.difficulty && (
+                    {resWithDifficulty.difficulty && (
                       <Badge tone={
-                        res.difficulty === 'Beginner' ? 'success' :
-                        res.difficulty === 'Intermediate' ? 'warning' :
-                        'info'
+                        resWithDifficulty.difficulty === 'Beginner' ? 'success' :
+                        resWithDifficulty.difficulty === 'Intermediate' ? 'warning' :
+                        'brand'
                       }>
-                        {res.difficulty}
+                        {resWithDifficulty.difficulty}
                       </Badge>
                     )}
                     {isCompleted && <Badge tone="success">✓ Done</Badge>}
