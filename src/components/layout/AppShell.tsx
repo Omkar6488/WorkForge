@@ -93,17 +93,6 @@ export function AppShell() {
               </NavLink>
             </div>
           </nav>
-
-          <div className="mt-auto shrink-0 px-4 py-6 border-t border-slate-200/80 dark:border-slate-800">
-            <div className="rounded-2xl bg-brand-50/60 p-4 dark:bg-brand-900/40">
-              <p className="text-xs font-semibold uppercase tracking-wide text-brand-700 dark:text-brand-200">
-                Job-readiness OS
-              </p>
-              <p className="mt-2 text-xs text-slate-700 dark:text-slate-300">
-                Simulations, skill maps, and opportunities in one disciplined flow for IT and digital roles.
-              </p>
-            </div>
-          </div>
         </aside>
 
         {mobileOpen ? (
