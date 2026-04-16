@@ -85,7 +85,7 @@ export function SimulationPreviewModal({
           {/* Scenario tag */}
           {scenarioTag && (
             <motion.div initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}>
-              <Badge tone={scenarioTag === 'Production Issue' ? 'danger' : 'brand'}>
+              <Badge tone={scenarioTag === 'Production Issue' ? 'warning' : 'brand'}>
                 {scenarioTag}
               </Badge>
             </motion.div>

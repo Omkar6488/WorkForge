@@ -111,10 +111,10 @@ export function SimulationHubPage() {
                 </Button>
                 <Button
                   variant="ghost"
-                  size="icon"
+                  size="sm"
                   onClick={() => setPreviewingId(sim.id)}
                   className="opacity-0 transition group-hover:opacity-100"
-                  title="Preview simulation"
+                  aria-label="Preview simulation"
                 >
                   <Eye className="h-4 w-4" />
                 </Button>

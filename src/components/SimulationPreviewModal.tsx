@@ -1,8 +1,10 @@
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Modal } from '@/components/ui/Modal'
-import { type Simulation, type Role } from '@/data/mock'
+import { type Simulation, roles } from '@/data/mock'
 import { Clock, ChevronRight, CheckCircle2, AlertCircle } from 'lucide-react'
+
+type Role = (typeof roles)[number]
 
 interface PreviewModalProps {
   simulation: Simulation
@@ -78,7 +80,7 @@ export function PreviewModal({ simulation, role, isOpen, onClose }: PreviewModal
                 </div>
                 <div className="flex-1 pb-2 pt-1">
                   <div className="font-medium text-slate-900 dark:text-white">{step.title}</div>
-                  <div className="mt-1 text-sm text-slate-600 dark:text-slate-400">{step.description}</div>
+                  <div className="mt-1 text-sm text-slate-600 dark:text-slate-400">{step.prompt}</div>
                 </div>
               </div>
             ))}
