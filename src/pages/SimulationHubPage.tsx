@@ -3,18 +3,22 @@ import { Button } from '@/components/ui/Button'
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
 import { PageHeader } from '@/components/ui/PageHeader'
 import { roles, simulations, type RoleId } from '@/data/mock'
-import { Clock, Cpu, MonitorDot } from 'lucide-react'
+import { Clock, Cpu, MonitorDot, Eye } from 'lucide-react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
+import { PreviewModal } from '@/components/SimulationPreviewModal'
 
 export function SimulationHubPage() {
   const [params] = useSearchParams()
   const roleFilter = (params.get('role') as RoleId | null) ?? null
+  const [previewingId, setPreviewingId] = useState<string | null>(null)
 
   const filtered = useMemo(() => {
     if (!roleFilter) return simulations
     return simulations.filter((s) => s.roleId === roleFilter)
   }, [roleFilter])
+
+  const previewingSim = previewingId ? simulations.find((s) => s.id === previewingId) : null
 
   return (
     <div className="space-y-10">
@@ -65,7 +69,7 @@ export function SimulationHubPage() {
           return (
             <Card
               key={sim.id}
-              className="group flex flex-col border-slate-200/80 transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-float)] dark:border-slate-800"
+              className="group relative flex flex-col border-slate-200/80 transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-float)] dark:border-slate-800"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3">
@@ -101,15 +105,33 @@ export function SimulationHubPage() {
                   {role?.title}
                 </span>
               </div>
-              <div className="mt-4">
-                <Button to={`/simulation/run/${sim.id}`} className="w-full sm:w-auto">
+              <div className="mt-4 flex gap-2">
+                <Button to={`/simulation/run/${sim.id}`} className="flex-1 sm:flex-none">
                   Launch simulation
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setPreviewingId(sim.id)}
+                  className="opacity-0 transition group-hover:opacity-100"
+                  title="Preview simulation"
+                >
+                  <Eye className="h-4 w-4" />
                 </Button>
               </div>
             </Card>
           )
         })}
       </div>
+
+      {previewingSim && (
+        <PreviewModal
+          simulation={previewingSim}
+          role={roles.find((r) => r.id === previewingSim.roleId)!}
+          isOpen={!!previewingId}
+          onClose={() => setPreviewingId(null)}
+        />
+      )}
     </div>
   )
 }

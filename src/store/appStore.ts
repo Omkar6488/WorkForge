@@ -37,6 +37,13 @@ import {
 // ============================================================================
 
 interface StoreActions {
+  // Authentication
+  isAuthenticated: boolean
+  userRole: 'student' | 'admin' | null
+  loginStudent: () => void
+  loginAdmin: () => void
+  logout: () => void
+
   // Initialization
   initializeStore: () => void
 
@@ -76,6 +83,10 @@ interface StoreActions {
 // ============================================================================
 
 export const useAppStore = create<AppState & StoreActions>((set: any) => ({
+  // Auth state
+  isAuthenticated: false,
+  userRole: null,
+
   // Initial state
   currentUser: null,
   roles: [],
@@ -96,6 +107,32 @@ export const useAppStore = create<AppState & StoreActions>((set: any) => ({
   experienceRecords: [],
   portfolioItems: [],
   resourceCompletions: [],
+
+  // ========================================================================
+  // AUTHENTICATION
+  // ========================================================================
+
+  loginStudent: () => {
+    set({
+      isAuthenticated: true,
+      userRole: 'student',
+    })
+  },
+
+  loginAdmin: () => {
+    set({
+      isAuthenticated: true,
+      userRole: 'admin',
+    })
+  },
+
+  logout: () => {
+    set({
+      isAuthenticated: false,
+      userRole: null,
+      currentUser: null,
+    })
+  },
 
   // ========================================================================
   // INITIALIZATION

@@ -1,15 +1,23 @@
 import { adminNav, mainNav } from '@/components/layout/nav'
 import { OnboardingModal } from '@/components/onboarding/OnboardingModal'
 import { useTheme } from '@/context/useTheme'
+import { useAppStore } from '@/store/appStore'
 import { cn } from '@/lib/cn'
-import { Menu, Moon, SunMedium, X } from 'lucide-react'
+import { Menu, Moon, SunMedium, X, LogOut } from 'lucide-react'
 import { useState } from 'react'
-import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
+import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 
 export function AppShell() {
   const { theme, toggleTheme } = useTheme()
   const [mobileOpen, setMobileOpen] = useState(false)
   const location = useLocation()
+  const navigate = useNavigate()
+  const logout = useAppStore((state) => state.logout)
+
+  const handleLogout = () => {
+    logout()
+    navigate('/', { replace: true })
+  }
 
   return (
     <div className="min-h-dvh bg-surface-0 dark:bg-surface-0">
@@ -136,6 +144,15 @@ export function AppShell() {
                 ) : (
                   <Moon className="h-5 w-5" />
                 )}
+              </button>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200/80 bg-surface-0 text-slate-700 shadow-sm transition hover:border-red-300 hover:text-red-700 dark:border-slate-800 dark:bg-surface-1 dark:text-slate-100 dark:hover:border-red-700 dark:hover:text-red-200"
+                aria-label="Sign out"
+                title="Sign out"
+              >
+                <LogOut className="h-5 w-5" />
               </button>
             </div>
           </header>

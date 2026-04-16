@@ -1,6 +1,6 @@
 export type RoleId = 'frontend' | 'backend' | 'data' | 'marketing'
 
-export type SimulationStepType = 'mcq' | 'text' | 'code'
+export type SimulationStepType = 'mcq' | 'text' | 'code' | 'analysis' | 'action' | 'decision' | 'explanation'
 
 export type SimulationStep = {
   id: string
@@ -11,9 +11,15 @@ export type SimulationStep = {
   correctIndex?: number
   rubricHint?: string
   placeholder?: string
+  /** For analysis/decision steps: data/context to present */
+  context?: string
+  /** For decision steps: available choices */
+  choices?: { label: string; explanation: string }[]
+  /** For analysis steps: expected insights */
+  expectedInsights?: string[]
 }
 
-export type SimulationKind = 'classic' | 'traffic'
+export type SimulationKind = 'classic' | 'traffic' | 'tool'
 
 export type Simulation = {
   id: string
@@ -27,6 +33,14 @@ export type Simulation = {
   steps: SimulationStep[]
   /** Optional: traffic ops UI layer in the runner (default classic when omitted). */
   kind?: SimulationKind
+  
+  /** NEW: Rich context for industry realism */
+  problemContext?: string
+  roleDescription?: string
+  whatYouWillDo?: string[]
+  tools?: string[]
+  expectedOutcome?: string
+  scenarioTag?: 'Production Issue' | 'Campaign Analysis' | 'Performance Crisis' | 'Quality Gate' | 'Customer Issue'
 }
 
 export type OpportunityType = 'internship' | 'job' | 'micro'
@@ -178,6 +192,16 @@ export const simulations: Simulation[] = [
     difficulty: 'Intermediate',
     durationMin: 25,
     skills: ['React', 'Testing', 'Web performance'],
+    scenarioTag: 'Quality Gate',
+    problemContext: 'Your e-commerce platform is launching a critical payment SDK upgrade in checkout. The engineering team is pushing to ship on schedule, but there are open concerns about test coverage and SDK stability in production. Your job is to assess risk, make clear tradeoffs, and unlock the path forward.',
+    roleDescription: 'You are the Frontend Technical Lead for the checkout module at Northwind Commerce. You own feature delivery, tech quality, and team unblocking.',
+    whatYouWillDo: [
+      'Triage the payment SDK regression and decide scope vs. timeline',
+      'Communicate decisions and trade-offs to PM, QA, and engineering',
+      'Suggest a protective coding pattern to prevent double-submit bugs'
+    ],
+    tools: ['GitHub', 'Slack', 'DataDog', 'Test framework'],
+    expectedOutcome: 'A clear, prioritized action plan that ships or defers with justification. The team knows next steps, owners, and timelines.',
     steps: [
       {
         id: 'fe-1',
@@ -220,6 +244,16 @@ export const simulations: Simulation[] = [
     difficulty: 'Advanced',
     durationMin: 30,
     skills: ['REST APIs', 'Auth', 'Observability'],
+    scenarioTag: 'Performance Crisis',
+    problemContext: 'HelioBank is preparing for a nation-wide promotional event that typically drives 40× normal traffic to the authentication and user profile endpoints. The platform must handle the spike without degradation, and any service disruption could lock customers out of banking transactions. Your team needs to harden the API layer immediately.',
+    roleDescription: 'You are a Senior Backend Engineer at HelioBank responsible for API reliability and scaling strategy.',
+    whatYouWillDo: [
+      'Design caching strategy for high-concurrency reads with cache invalidation',
+      'Standardize error contracts for mobile clients while maintaining backward compatibility',
+      'Implement rate limiting to protect critical auth endpoints'
+    ],
+    tools: ['Postman', 'Redis monitoring', 'AWS CloudWatch', 'Splunk logs'],
+    expectedOutcome: 'A resilient API layer that gracefully handles 40× traffic surge with minimal client impact. Clear error messages and predictable rate limits protect from cascading failures.',
     steps: [
       {
         id: 'be-1',
@@ -259,6 +293,16 @@ export const simulations: Simulation[] = [
     difficulty: 'Intermediate',
     durationMin: 22,
     skills: ['SQL', 'Visualization', 'Storytelling'],
+    scenarioTag: 'Campaign Analysis',
+    problemContext: 'Friday afternoon: your analytics dashboard shows paid social clicks up 300% but conversions flat. Your CFO is making budget decisions Monday morning. You must determine if this is a tracking issue, audience overlap problem, or fraud signal. The wrong call could waste hundreds of thousands of dollars.',
+    roleDescription: 'You are a Senior Analytics Engineer at Lumen Ads. You own data integrity for marketing channels and advise executive leadership on budget allocation.',
+    whatYouWillDo: [
+      'Check data sanity: validate tracking, landing page redirects, and audience overlap',
+      'Identify root cause: fraud signals, iOS privacy changes, or tracking gaps',
+      'Create executive summary with insights and budget recommendation'
+    ],
+    tools: ['SQL', 'Tableau', 'Google Analytics', 'Attribution model'],
+    expectedOutcome: 'A clear diagnosis with data support. Leadership has confidence in the budget decision backed by verified metrics.',
     steps: [
       {
         id: 'da-1',
@@ -298,6 +342,16 @@ export const simulations: Simulation[] = [
     difficulty: 'Beginner',
     durationMin: 18,
     skills: ['SEO/SEM', 'Analytics', 'Experiment design'],
+    scenarioTag: 'Campaign Analysis',
+    problemContext: 'Your product launch went live last week: website traffic is strong, but qualified SQL (Sales Qualified Leads) conversion tanked. Sales reports follow-ups feel low quality. You have 2 hours to diagnose and propose the next experiment before the stakeholder sync.',
+    roleDescription: 'You are a Growth Marketing Manager at Orbit SaaS. You own demand gen funnel and experiment velocity.',
+    whatYouWillDo: [
+      'Identify bottleneck: is it traffic quality, messaging fit, or sales follow-up SLA?',
+      'Interview sales and inspect lead quality across sources',
+      'Design rapid experiment to validate one hypothesis'
+    ],
+    tools: ['HubSpot', 'Google Analytics', 'Slack', 'Figjam'],
+    expectedOutcome: 'Clear diagnosis with prioritized fixes. Experiment proposal ready for execution this week.',
     steps: [
       {
         id: 'dm-1',
@@ -338,6 +392,16 @@ export const simulations: Simulation[] = [
     difficulty: 'Intermediate',
     durationMin: 28,
     skills: ['Situational analysis', 'Incident triage', 'Stakeholder comms'],
+    scenarioTag: 'Production Issue',
+    problemContext: 'City Mobility Control manages traffic for a metropolitan region hosting a major music festival this weekend. Operations center forecasts 3× normal vehicle volume. Your real-time monitoring dashboard is ingesting live sensor data from 200+ intersections and corridors. Multiple teams—traffic police, transit authority, emergency services—depend on your alerts and recommendations to keep the city moving.',
+    roleDescription: 'You are the Incident Commander for City Mobility Control operations. You own real-time decision-making and cross-team coordination during surge events.',
+    whatYouWillDo: [
+      'Monitor real-time congestion dashboards and incident alerts',
+      'Triage anomalies: distinguish genuine congestion from sensor noise',
+      'Coordinate with field teams (police, transit) and public communications'
+    ],
+    tools: ['SCATS system', 'Google Maps API', 'Slack', 'Real-time dashboards'],
+    expectedOutcome: 'Smooth festival traffic with minimal congestion backspill. Public informed, field teams coordinated, incident escalations clear.',
     kind: 'traffic',
     steps: [
       {
